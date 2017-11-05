@@ -1,7 +1,8 @@
 package com.badgames.jackslettebak.image;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
+
+import com.badgames.jackslettebak.utilities.Globals.Group;
 
 /**
  * Created by Jack Slettebak on 10/22/2017.
@@ -10,16 +11,14 @@ import android.net.Uri;
 public class Sprite {
 
     private Bitmap image;
-    private Integer color;
-    private Uri uri;
+    private Integer group;
 
-    public Sprite( Bitmap image, Integer color ) {
-        this.color = color;
+    public Sprite( Bitmap image, Integer group ) {
+        this.group = group;
         this.image = image;
     }
 
     public Bitmap getImage() { return image; }
-    public Integer getColor() { return color; }
-    public Uri getUri() { return uri; }
+    public Integer getGroupId() { return group; }
 
 }

@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
         Globals.SCREEN_HEIGHT -= 100;
         Globals.SCREEN_DENSITY = getResources().getDisplayMetrics().density;
+        Globals.BLOCK_HEIGHT = Globals.SCREEN_HEIGHT / Globals.N_BLOCKS_Y;
+        Globals.BLOCK_WIDTH = Globals.SCREEN_WIDTH / Globals.N_BLOCKS_X;
 
         Globals.IMAGES = new Bitmap[ DEFAULT_IMAGES.length ];
         for( int i = 0; i < DEFAULT_IMAGES.length; i++ )

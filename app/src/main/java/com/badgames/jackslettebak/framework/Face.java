@@ -21,13 +21,13 @@ public class Face {
     private Paint paint, background;
     private PointF location;
 
-    public Face(PointF location, Sprite sprite, Integer type ) {
+    public Face( PointF location, Sprite sprite, Integer type ) {
         this.image = sprite.getImage();
         this.location = location;
         this.paint = new Paint();
         this.type = type;
         this.background = new Paint();
-        this.background.setColor( sprite.getColor() );
+        this.background.setColor( sprite.getGroupId() );
         setSelected( false );
     }
 

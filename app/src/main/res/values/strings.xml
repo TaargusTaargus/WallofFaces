@@ -4,4 +4,6 @@
     <string name="face_capture_browse">Browse Pictures</string>
     <string name="face_crop_crop">Crop Picture</string>
     <string name="save_final_capture_image">Save</string>
+    <string name="image_pack_edit_string">Edit</string>
+    <string name="image_pack_remove_string">Remove</string>
 </resources>

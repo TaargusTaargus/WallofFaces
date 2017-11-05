@@ -7,30 +7,35 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.ExifInterface;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewManager;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.badgames.jackslettebak.image.FaceCropView;
 import com.badgames.jackslettebak.image.FaceTransparentView;
+import com.badgames.jackslettebak.image.ImagePack;
+import com.badgames.jackslettebak.image.Sprite;
 import com.badgames.jackslettebak.utilities.Globals;
-import com.badgames.jackslettebak.utilities.Globals.Background;
+import com.badgames.jackslettebak.utilities.Globals.Group;
 import com.badgames.jackslettebak.utilities.Utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
 
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
@@ -59,25 +64,33 @@ public class FaceCaptureActivity extends AppCompatActivity {
     final int CAMERA_CAPTURE_CODE = 100;
     final int BROWSE_PICTURES_CODE = 101;
 
-    private Background [] availableBackgrounds = Background.values();
+    private Group[] availableBackgrounds = Group.values();
     private Button browse, camera, crop, save;
+    private CapturedImagesListAdapter listAdapter;
     private Cropper cropBorder;
     private FaceCropView cropper;
     private FaceTransparentView transparentView;
+    private ImagePack createdImages = new ImagePack();
     private ImageView selectedBackground;
     private LinearLayout editLayout, backgroundLayout;
+    private ListView capturedImages;
     private Uri picUri;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_face_capture );
+        setContentView( R.layout.image_pack_creation_layout );
 
         browse = ( Button ) findViewById( R.id.face_capture_browse );
         browse.setOnClickListener( new BrowseOnClickListener() );
 
         camera = ( Button ) findViewById( R.id.face_capture_camera );
         camera.setOnClickListener( new CameraOnClickListener() );
+
+        capturedImages = ( ListView ) findViewById( R.id.image_pack_list );
+        capturedImages.setAdapter(
+                listAdapter = new CapturedImagesListAdapter( this, createdImages )
+        );
     }
 
     @Override
@@ -151,7 +164,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
         setContentView( R.layout.transparent_image_layout );
 
 
-        Background start = availableBackgrounds[ 0 ];
+        Group start = availableBackgrounds[ 0 ];
 
         editLayout = ( LinearLayout ) findViewById( R.id.edit_picture_layout );
         editLayout.addView(
@@ -165,7 +178,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
         transparentView.requestDraw();
 
         backgroundLayout = ( LinearLayout ) findViewById( R.id.background_options );
-        for( Background background : availableBackgrounds ) {
+        for( Group background : availableBackgrounds ) {
             ImageView imageView = new ImageView( this );
             imageView.setImageDrawable( background.getDrawable( this ) );
             imageView.setOnClickListener( new BackgroundOnClickListener( background, imageView ) );
@@ -183,12 +196,52 @@ public class FaceCaptureActivity extends AppCompatActivity {
         save.setOnClickListener( new SaveOnClickListener() );
     }
 
+    // adapters
+    private class CapturedImagesListAdapter extends BaseAdapter {
+
+        private Context context;
+        private LinkedList< Sprite > images;
+
+        public CapturedImagesListAdapter( Context context, ImagePack images ) {
+            this.context = context;
+            this.images = new LinkedList< Sprite >( images.values() );
+        }
+
+        @Override
+        public int getCount() {
+            return images.size();
+        }
+
+        @Override
+        public Sprite getItem( int i ) {
+            return images.get( i );
+        }
+
+        @Override
+        public long getItemId( int i ) {
+            return getItem( i ).getGroupId();
+        }
+
+        @Override
+        public View getView( int i, View view, ViewGroup viewGroup ) {
+            RelativeLayout layout = ( RelativeLayout ) LayoutInflater
+                                        .from( context )
+                                        .inflate( R.layout.image_pack_item_layout, null );
+            ( ( ImageView ) layout.findViewById( R.id.image_pack_image ) )
+                                        .setImageBitmap( getItem( i ).getImage() );
+            return layout;
+        }
+
+    }
+
+
+    // event listeners
     private class BackgroundOnClickListener implements  View.OnClickListener {
 
-        private Background background;
+        private Group background;
         private ImageView imageView;
 
-        public BackgroundOnClickListener( Background background, ImageView imageView ) {
+        public BackgroundOnClickListener(Group background, ImageView imageView ) {
             this.background = background;
             this.imageView = imageView;
         }
@@ -250,10 +303,19 @@ public class FaceCaptureActivity extends AppCompatActivity {
 
         @Override
         public void onClick( View view ) {
-            ImageView tmp = new ImageView( getApplicationContext() );
-            tmp.setImageBitmap( transparentView.getFinalImage() );
-            addContentView(tmp, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-            setContentView( tmp );
+            setContentView( R.layout.image_pack_creation_layout );
+            capturedImages = ( ListView ) findViewById( R.id.image_pack_list );
+            createdImages.addImage(
+                    Bitmap.createScaledBitmap(
+                            transparentView.getFinalImage(),
+                            Globals.BLOCK_WIDTH,
+                            Globals.BLOCK_HEIGHT,
+                            false
+                    )
+            );
+            capturedImages.setAdapter(
+                    listAdapter = new CapturedImagesListAdapter( getApplicationContext(), createdImages )
+            );
         }
 
     }

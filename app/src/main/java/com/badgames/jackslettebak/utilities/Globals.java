@@ -16,6 +16,10 @@ import com.badgames.jackslettebak.walloffaces.R;
 public class Globals {
     public static int SCREEN_HEIGHT = 0;
     public static int SCREEN_WIDTH = 0;
+    public static int BLOCK_HEIGHT = 0;
+    public static int BLOCK_WIDTH = 0;
+    public static final int N_BLOCKS_X = 8;
+    public static final int N_BLOCKS_Y = 10;
     public static float SCREEN_DENSITY = 0;
     public static Bitmap [] IMAGES = null;
     public static int [] BACKGROUNDS = {
@@ -24,7 +28,7 @@ public class Globals {
             Color.BLUE
     };
 
-    public enum Background {
+    public enum Group {
         BLUE( R.drawable.blue_background ),
         GREEN( R.drawable.green_background ),
         RED( R.drawable.red_background ),
@@ -34,7 +38,7 @@ public class Globals {
 
         int resource;
 
-        Background( int resource ) {
+        Group( int resource ) {
             this.resource = resource;
         }
 

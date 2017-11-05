@@ -19,12 +19,12 @@ public class Wall {
 
     private Bitmap [] images;
     private Face [] wall;
-    private Float spriteHeight, spriteWidth;
+    private Integer spriteHeight, spriteWidth;
     private Integer height, width;
     private SelectList selected;
 
     public Wall( Integer width, Integer height,
-                 Float spriteWidth, Float spriteHeight,
+                 Integer spriteWidth, Integer spriteHeight,
                  Bitmap [] images ) {
         this.height = height;
         this.images = images;
@@ -55,9 +55,17 @@ public class Wall {
             Integer type = generator.nextInt( images.length );
             wall[ i ] = new Face( new PointF( i % width * spriteWidth,
                                               ( ( int ) ( i / width ) ) * spriteHeight ),
-                                  new Sprite( Bitmap.createScaledBitmap( images[ type ],  spriteWidth.intValue(), spriteHeight.intValue(), false ),
-                                              Globals.BACKGROUNDS[ type ] )
-                                , type );
+                                  new Sprite(
+                                          Bitmap.createScaledBitmap(
+                                                  images[ type ],
+                                                  spriteWidth,
+                                                  spriteHeight,
+                                                  false
+                                          ),
+                                          Globals.BACKGROUNDS[ type ]
+                                  ),
+                    type
+            );
 
         }
     }

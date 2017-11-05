@@ -21,16 +21,12 @@ import com.badgames.jackslettebak.walloffaces.MainActivity;
 public class WOFView extends SurfaceView
                             implements View.OnTouchListener {
 
-    public static final int N_BLOCKS_X = 8;
-    public static final int N_BLOCKS_Y = 10;
-
     private Wall game;
 
     public WOFView( Context context ) {
         super( context );
-        this.game = new Wall( WOFView.N_BLOCKS_X, WOFView.N_BLOCKS_Y,
-                                Float.valueOf( Globals.SCREEN_WIDTH / WOFView.N_BLOCKS_X ),
-                                Float.valueOf( Globals.SCREEN_HEIGHT / WOFView.N_BLOCKS_Y ),
+        this.game = new Wall( Globals.N_BLOCKS_X, Globals.N_BLOCKS_Y,
+                                Globals.BLOCK_WIDTH, Globals.BLOCK_HEIGHT,
                                 Globals.IMAGES );
         this.game.init();
         setBackgroundColor( Color.WHITE );

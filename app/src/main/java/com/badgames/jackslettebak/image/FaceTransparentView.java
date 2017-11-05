@@ -2,24 +2,18 @@ package com.badgames.jackslettebak.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.HorizontalScrollView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.badgames.jackslettebak.utilities.Globals.Background;
 import com.badgames.jackslettebak.utilities.Globals;
-
-import javax.microedition.khronos.opengles.GL;
 
 /**
  * Created by Jack Slettebak on 10/31/2017.

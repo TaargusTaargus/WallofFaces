@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Wall of Faces</string>
+    <string name="face_capture_camera">Capture</string>
+    <string name="face_capture_browse">Browse Pictures</string>
+    <string name="face_crop_crop">Crop Picture</string>
+    <string name="save_final_capture_image">Save</string>
+</resources>

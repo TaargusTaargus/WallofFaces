@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -47,6 +48,16 @@ public class Utilities {
                 imagePath      /* directory */
         );
         return image;
+    }
+
+    public static Uri writeImageFile( Context context, Bitmap bitmap ) throws IOException {
+        File file = createImageFile( context );
+        FileOutputStream fos = context.openFileOutput( file.getName(), Context.MODE_PRIVATE );
+
+        // Writing the bitmap to the output stream
+        bitmap.compress( Bitmap.CompressFormat.PNG, 100, fos );
+        fos.close();
+        return Uri.fromFile( file );
     }
 
 }

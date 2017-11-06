@@ -6,4 +6,5 @@
     <string name="save_final_capture_image">Save</string>
     <string name="image_pack_edit_string">Edit</string>
     <string name="image_pack_remove_string">Remove</string>
+    <string name="image_pack_list_header">Captured Images:</string>
 </resources>

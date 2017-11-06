@@ -19,7 +19,7 @@ import com.badgames.jackslettebak.utilities.Globals;
  * Created by Jack Slettebak on 10/31/2017.
  */
 
-public class FaceTransparentView extends SurfaceView
+public class FaceEditView extends SurfaceView
         implements View.OnTouchListener {
 
     public final int DEFAULT_ERASER_RADIUS = ( int ) Globals.SCREEN_DENSITY * 8;
@@ -31,7 +31,7 @@ public class FaceTransparentView extends SurfaceView
     private Paint eraserPaint, backgroundPaint, imagePaint;
     private PointF location, bounds, eraser;
 
-    public FaceTransparentView( Context context, Bitmap imageToEdit, Bitmap border ) {
+    public FaceEditView(Context context, Bitmap imageToEdit, Bitmap border ) {
         super( context );
         this.background = border;
         this.backgroundPaint = new Paint();

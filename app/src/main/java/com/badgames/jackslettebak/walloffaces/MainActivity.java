@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate( savedInstanceState );
 
-        startActivity( new Intent( this, FaceCaptureActivity.class ) );
-
         Display display = getWindowManager().getDefaultDisplay();
         if ( Build.VERSION.SDK_INT >= 17 ){
             //new pleasant way to get real metrics
@@ -69,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             Globals.IMAGES[ i ] = BitmapFactory.decodeResource( getResources(),
                                                                 DEFAULT_IMAGES[ i ] );
 
+        startActivity( new Intent( this, FaceCaptureActivity.class ) );
         setContentView( new WOFView( this ) );
 
     }

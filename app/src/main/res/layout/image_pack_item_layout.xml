@@ -8,6 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/image_pack_image"
+        android:layout_margin="5dp"
         android:layout_alignParentLeft="true" />
 
     <Button

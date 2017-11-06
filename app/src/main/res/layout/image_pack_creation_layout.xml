@@ -24,6 +24,13 @@
             android:id="@+id/face_capture_browse"/>
     </LinearLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/image_pack_list_header"
+        android:textSize="20dp"
+        android:layout_margin="5dp"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

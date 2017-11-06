@@ -26,7 +26,7 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.badgames.jackslettebak.image.FaceCropView;
-import com.badgames.jackslettebak.image.FaceTransparentView;
+import com.badgames.jackslettebak.image.FaceEditView;
 import com.badgames.jackslettebak.image.ImagePack;
 import com.badgames.jackslettebak.image.Sprite;
 import com.badgames.jackslettebak.utilities.Globals;
@@ -46,33 +46,14 @@ import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 
 public class FaceCaptureActivity extends AppCompatActivity {
 
-    public enum Cropper {
-        RECTANGLE( R.drawable.rectangle_selector );
-
-        Integer drawable;
-
-        Cropper( Integer drawable ) {
-            this.drawable = drawable;
-        }
-
-        public Bitmap getBitmap( Context context ) {
-            return BitmapFactory.decodeResource( context.getResources(), drawable );
-        }
-    }
-
-    final String URI_CAMERA_AUTHORITY = "com.badgames.wof";
     final int CAMERA_CAPTURE_CODE = 100;
     final int BROWSE_PICTURES_CODE = 101;
+    final int EDIT_PICTURE_CODE = 102;
+    final String URI_CAMERA_AUTHORITY = "com.badgames.wof";
 
-    private Group[] availableBackgrounds = Group.values();
-    private Button browse, camera, crop, save;
+    private Button browse, camera;
     private CapturedImagesListAdapter listAdapter;
-    private Cropper cropBorder;
-    private FaceCropView cropper;
-    private FaceTransparentView transparentView;
     private ImagePack createdImages = new ImagePack();
-    private ImageView selectedBackground;
-    private LinearLayout editLayout, backgroundLayout;
     private ListView capturedImages;
     private Uri picUri;
 
@@ -101,99 +82,30 @@ public class FaceCaptureActivity extends AppCompatActivity {
             toast.show();
         }
         else {
-            setContentView( R.layout.crop_image_layout );
-            editLayout = ( LinearLayout ) findViewById( R.id.crop_image_layout );
-            crop = ( Button ) findViewById( R.id.face_crop_button );
-            cropBorder = Cropper.RECTANGLE;
             switch( req ) {
                 case BROWSE_PICTURES_CODE:
                     picUri = data.getData();
                 case CAMERA_CAPTURE_CODE:
-                    loadImage();
+                    Intent editPictureIntent = new Intent( this, FaceEditActivity.class );
+                    editPictureIntent.setData( picUri );
+                    startActivityForResult( editPictureIntent, EDIT_PICTURE_CODE );
+                    break;
+                case EDIT_PICTURE_CODE:
+                    createdImages.addImage(
+                            Bitmap.createScaledBitmap(
+                                    FaceEditActivity.FINAL_IMAGE,
+                                    Math.max( Globals.BLOCK_WIDTH, Globals.BLOCK_HEIGHT ),
+                                    Math.max( Globals.BLOCK_WIDTH, Globals.BLOCK_HEIGHT ),
+                                    false
+                            )
+                    );
+                    capturedImages.setAdapter(
+                            listAdapter = new CapturedImagesListAdapter( getApplicationContext(), createdImages )
+                    );
                     break;
             }
-            crop.setOnClickListener( new View.OnClickListener() {
-                @Override
-                public void onClick( View view ) {
-                    loadTransparentLayout();
-                }
-            } );
+
         }
-    }
-
-    private void loadImage() {
-        try {
-            InputStream bitmapStream = getContentResolver().openInputStream( picUri );
-            ExifInterface ei = new ExifInterface( bitmapStream );
-            int orientation = ei.getAttributeInt( ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED );
-
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap( getContentResolver(), picUri );
-            switch ( orientation ) {
-
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    bitmap = Utilities.rotateImage( bitmap, 90.f );
-                    break;
-
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    bitmap = Utilities.rotateImage( bitmap, 180.f );
-                    break;
-
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    bitmap = Utilities.rotateImage( bitmap, 270.f );
-                    break;
-
-                case ExifInterface.ORIENTATION_NORMAL:
-                default:
-                    bitmap = Utilities.rotateImage( bitmap, 270.f );
-            }
-            editLayout.addView( cropper = new FaceCropView( this, bitmap, cropBorder.getBitmap( this ) ),
-                    new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                    )
-            );
-        } catch( IOException e ) {
-            Log.d( "IOException", "Was unable to load ExIf data on: " + e.getLocalizedMessage() );
-        }
-    }
-
-    private void loadTransparentLayout () {
-        crop.setVisibility( View.GONE );
-        editLayout.removeAllViews();
-        setContentView( R.layout.transparent_image_layout );
-
-
-        Group start = availableBackgrounds[ 0 ];
-
-        editLayout = ( LinearLayout ) findViewById( R.id.edit_picture_layout );
-        editLayout.addView(
-                transparentView = new FaceTransparentView(
-                        getApplicationContext(),
-                        cropper.getCroppedBitmap(),
-                        start.getBitmap( getApplicationContext() )
-                )
-        );
-        transparentView.attachSeekBar( ( SeekBar ) findViewById( R.id.eraser_size ) );
-        transparentView.requestDraw();
-
-        backgroundLayout = ( LinearLayout ) findViewById( R.id.background_options );
-        for( Group background : availableBackgrounds ) {
-            ImageView imageView = new ImageView( this );
-            imageView.setImageDrawable( background.getDrawable( this ) );
-            imageView.setOnClickListener( new BackgroundOnClickListener( background, imageView ) );
-            imageView.setLayoutParams( new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT ) );
-            imageView.setPadding(
-                    ( int ) Globals.SCREEN_DENSITY * 10, ( int ) Globals.SCREEN_DENSITY * 10,
-                    ( int ) Globals.SCREEN_DENSITY * 10, ( int ) Globals.SCREEN_DENSITY * 10
-            );
-            backgroundLayout.addView( imageView );
-            if( background == start )
-                ( selectedBackground = imageView ).setBackgroundColor( Color.GRAY );
-        }
-
-        save = ( Button ) findViewById( R.id.save_image );
-        save.setOnClickListener( new SaveOnClickListener() );
     }
 
     // adapters
@@ -236,26 +148,6 @@ public class FaceCaptureActivity extends AppCompatActivity {
 
 
     // event listeners
-    private class BackgroundOnClickListener implements  View.OnClickListener {
-
-        private Group background;
-        private ImageView imageView;
-
-        public BackgroundOnClickListener(Group background, ImageView imageView ) {
-            this.background = background;
-            this.imageView = imageView;
-        }
-
-        @Override
-        public void onClick( View view ) {
-            selectedBackground.setBackgroundColor( Color.TRANSPARENT );
-            ( selectedBackground = imageView ).setBackgroundColor( Color.GRAY );
-            transparentView.setBackgroundImage( background.getBitmap( getApplicationContext() ) );
-            transparentView.requestDraw();
-        }
-
-    }
-
     private class BrowseOnClickListener implements View.OnClickListener {
 
         @Override
@@ -295,27 +187,6 @@ public class FaceCaptureActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText( getApplicationContext(), errorMessage, Toast.LENGTH_SHORT );
                 toast.show();
             }
-        }
-
-    }
-
-    private class SaveOnClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick( View view ) {
-            setContentView( R.layout.image_pack_creation_layout );
-            capturedImages = ( ListView ) findViewById( R.id.image_pack_list );
-            createdImages.addImage(
-                    Bitmap.createScaledBitmap(
-                            transparentView.getFinalImage(),
-                            Globals.BLOCK_WIDTH,
-                            Globals.BLOCK_HEIGHT,
-                            false
-                    )
-            );
-            capturedImages.setAdapter(
-                    listAdapter = new CapturedImagesListAdapter( getApplicationContext(), createdImages )
-            );
         }
 
     }

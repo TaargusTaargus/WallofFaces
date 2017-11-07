@@ -4,8 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,18 +17,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.badgames.jackslettebak.image.FaceCropView;
-import com.badgames.jackslettebak.image.FaceEditView;
+import com.badgames.jackslettebak.image.EditContext;
 import com.badgames.jackslettebak.image.ImagePack;
 import com.badgames.jackslettebak.image.Sprite;
 import com.badgames.jackslettebak.utilities.Globals;
-import com.badgames.jackslettebak.utilities.Globals.Group;
 import com.badgames.jackslettebak.utilities.Utilities;
 
 import java.io.IOException;
@@ -86,6 +80,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
                 case BROWSE_PICTURES_CODE:
                     picUri = data.getData();
                 case CAMERA_CAPTURE_CODE:
+                    scanImageToBitmap();
                     Intent editPictureIntent = new Intent( this, FaceEditActivity.class );
                     editPictureIntent.setData( picUri );
                     startActivityForResult( editPictureIntent, EDIT_PICTURE_CODE );
@@ -93,7 +88,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
                 case EDIT_PICTURE_CODE:
                     createdImages.addImage(
                             Bitmap.createScaledBitmap(
-                                    FaceEditActivity.FINAL_IMAGE,
+                                    EditContext.EDITTED_IMAGE,
                                     Math.max( Globals.BLOCK_WIDTH, Globals.BLOCK_HEIGHT ),
                                     Math.max( Globals.BLOCK_WIDTH, Globals.BLOCK_HEIGHT ),
                                     false
@@ -105,6 +100,40 @@ public class FaceCaptureActivity extends AppCompatActivity {
                     break;
             }
 
+        }
+    }
+
+    private void scanImageToBitmap() {
+        try {
+            InputStream bitmapStream = getContentResolver().openInputStream( picUri );
+            ExifInterface ei = new ExifInterface( bitmapStream );
+            int orientation = ei.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED
+            );
+
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap( getContentResolver(), picUri );
+            switch ( orientation ) {
+
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    bitmap = Utilities.rotateImage( bitmap, 90.f );
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    bitmap = Utilities.rotateImage( bitmap, 180.f );
+                    break;
+
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    bitmap = Utilities.rotateImage( bitmap, 270.f );
+                    break;
+
+                case ExifInterface.ORIENTATION_NORMAL:
+                default:
+                    bitmap = Utilities.rotateImage( bitmap, 270.f );
+            }
+            EditContext.IMAGE_TO_EDIT = bitmap;
+        } catch( IOException e ) {
+            Log.d( "IOException", "Was unable to load ExIf data on: " + e.getLocalizedMessage() );
         }
     }
 
@@ -141,6 +170,10 @@ public class FaceCaptureActivity extends AppCompatActivity {
                                         .inflate( R.layout.image_pack_item_layout, null );
             ( ( ImageView ) layout.findViewById( R.id.image_pack_image ) )
                                         .setImageBitmap( getItem( i ).getImage() );
+            ( ( Button ) layout.findViewById( R.id.image_pack_remove ) )
+                                        .setOnClickListener( new RemoveOnClickListener( getItem( i ) ) );
+            ( ( Button ) layout.findViewById( R.id.image_pack_edit ) )
+                    .setOnClickListener( new EditOnClickListener( getItem( i ) ) );
             return layout;
         }
 
@@ -187,6 +220,42 @@ public class FaceCaptureActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText( getApplicationContext(), errorMessage, Toast.LENGTH_SHORT );
                 toast.show();
             }
+        }
+
+    }
+
+    private class EditOnClickListener implements  View.OnClickListener {
+
+        private Sprite image;
+
+        public EditOnClickListener( Sprite image ) {
+            this.image = image;
+        }
+
+        @Override
+        public void onClick( View view ) {
+            EditContext.IMAGE_TO_EDIT = image.getImage();
+            Intent editPictureIntent = new Intent( getApplicationContext(), FaceEditActivity.class );
+            editPictureIntent.setData( picUri );
+            startActivityForResult( editPictureIntent, EDIT_PICTURE_CODE );
+        }
+
+    }
+
+    private class RemoveOnClickListener implements  View.OnClickListener {
+
+        private Sprite image;
+
+        public RemoveOnClickListener( Sprite image ) {
+            this.image = image;
+        }
+
+        @Override
+        public void onClick( View view ) {
+            createdImages.remove( image.getGroupId() );
+            capturedImages.setAdapter(
+                    listAdapter = new CapturedImagesListAdapter( getApplicationContext(), createdImages )
+            );
         }
 
     }

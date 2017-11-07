@@ -126,10 +126,12 @@ public class FaceEditView extends SurfaceView
     }
 
     public Bitmap getFinalImage() {
-        Bitmap image = Bitmap.createBitmap( ( int ) bounds.x, ( int ) bounds.y, Bitmap.Config.ARGB_8888 );
-        Canvas canvas = new Canvas( image );
-        draw( canvas );
-        return image;
+        Bitmap finalImage = Bitmap.createBitmap( ( int ) bounds.x, ( int ) bounds.y, Bitmap.Config.ARGB_8888 );
+        Canvas canvas = new Canvas( finalImage );
+        super.draw( canvas );
+        canvas.drawBitmap( image, location.x, location.y, imagePaint );
+        canvas.drawBitmap( background, location.x, location.y, backgroundPaint );
+        return finalImage;
     }
 
     public void setBackgroundImage( Bitmap image ) { background = Bitmap.createScaledBitmap( image, getWidth(), getHeight(), false ); }

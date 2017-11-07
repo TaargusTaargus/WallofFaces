@@ -51,7 +51,7 @@ public class FaceEditActivity extends Activity {
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.crop_image_layout );
+        setContentView( R.layout.crop_view_layout);
 
 
         loadCropLayout();
@@ -80,10 +80,16 @@ public class FaceEditActivity extends Activity {
                         LinearLayout.LayoutParams.MATCH_PARENT
                 )
         );
+
+        ( ( Button ) findViewById( R.id.increase_crop_size_button ) )
+                .setOnClickListener( new CropAdjustClickListener( 1 ) );
+
+        ( ( Button ) findViewById( R.id.decrease_crop_size_button ) )
+                .setOnClickListener( new CropAdjustClickListener( -1 ) );
     }
 
     private void loadTransparentLayout () {
-        setContentView( R.layout.transparent_image_layout );
+        setContentView( R.layout.edit_view_layout);
         Group start = availableBackgrounds[ 0 ];
         editLayout = ( LinearLayout ) findViewById( R.id.edit_picture_layout );
         editLayout.addView(
@@ -143,6 +149,21 @@ public class FaceEditActivity extends Activity {
             ( selectedBackground = imageView ).setBackgroundColor( Color.GRAY );
             editView.setBackgroundImage( background.getBitmap( getApplicationContext() ) );
             editView.requestDraw();
+        }
+
+    }
+
+    private class CropAdjustClickListener implements View.OnClickListener {
+
+        private Integer delta;
+
+        public CropAdjustClickListener( Integer delta ) {
+            this.delta = delta;
+        }
+
+        @Override
+        public void onClick( View view ) {
+            cropView.adjustCropSize( delta );
         }
 
     }

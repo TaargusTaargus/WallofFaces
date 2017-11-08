@@ -9,5 +9,5 @@
     <string name="image_pack_list_header">Captured Images:</string>
     <string name="decrease_crop_size_button_text">-</string>
     <string name="increase_crop_size_button_text">+</string>
-
+    <string name="save_image_list_button_text">Save Images</string>
 </resources>

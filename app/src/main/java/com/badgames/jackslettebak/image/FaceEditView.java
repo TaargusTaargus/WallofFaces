@@ -13,7 +13,7 @@ import android.view.ViewTreeObserver;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.badgames.jackslettebak.utilities.Globals;
+import com.badgames.jackslettebak.game.GameContext;
 
 /**
  * Created by Jack Slettebak on 10/31/2017.
@@ -22,9 +22,9 @@ import com.badgames.jackslettebak.utilities.Globals;
 public class FaceEditView extends SurfaceView
         implements View.OnTouchListener {
 
-    public final int DEFAULT_ERASER_RADIUS = ( int ) Globals.SCREEN_DENSITY * 8;
-    public final int MAX_ERASER_RADIUS = ( int ) Globals.SCREEN_DENSITY * 16;
-    public final int MIN_ERASER_RADIUS = ( int ) Globals.SCREEN_DENSITY * 2;
+    public final int DEFAULT_ERASER_RADIUS = ( int ) GameContext.SCREEN_DENSITY * 8;
+    public final int MAX_ERASER_RADIUS = ( int ) GameContext.SCREEN_DENSITY * 16;
+    public final int MIN_ERASER_RADIUS = ( int ) GameContext.SCREEN_DENSITY * 2;
 
     private Bitmap background, image;
     private Integer eraserSize;

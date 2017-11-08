@@ -21,10 +21,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.badgames.jackslettebak.game.GameContext;
 import com.badgames.jackslettebak.image.EditContext;
 import com.badgames.jackslettebak.image.ImagePack;
-import com.badgames.jackslettebak.image.Sprite;
-import com.badgames.jackslettebak.utilities.Globals;
 import com.badgames.jackslettebak.utilities.Utilities;
 
 import java.io.IOException;
@@ -45,7 +44,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
     final int EDIT_PICTURE_CODE = 102;
     final String URI_CAMERA_AUTHORITY = "com.badgames.wof";
 
-    private Button browse, camera;
+    private Button browse, camera, save;
     private CapturedImagesListAdapter listAdapter;
     private ImagePack createdImages = new ImagePack();
     private ListView capturedImages;
@@ -54,7 +53,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.image_pack_creation_layout );
+        setContentView( R.layout.capture_activity_layout);
 
         browse = ( Button ) findViewById( R.id.face_capture_browse );
         browse.setOnClickListener( new BrowseOnClickListener() );
@@ -66,6 +65,9 @@ public class FaceCaptureActivity extends AppCompatActivity {
         capturedImages.setAdapter(
                 listAdapter = new CapturedImagesListAdapter( this, createdImages )
         );
+
+        save = ( Button ) findViewById( R.id.save_image_list_button );
+        save.setOnClickListener( new SaveOnClickListener() );
     }
 
     @Override
@@ -89,8 +91,8 @@ public class FaceCaptureActivity extends AppCompatActivity {
                     createdImages.addImage(
                             Bitmap.createScaledBitmap(
                                     EditContext.EDITTED_IMAGE,
-                                    Math.max( Globals.BLOCK_WIDTH, Globals.BLOCK_HEIGHT ),
-                                    Math.max( Globals.BLOCK_WIDTH, Globals.BLOCK_HEIGHT ),
+                                    Math.max( GameContext.BLOCK_WIDTH, GameContext.BLOCK_HEIGHT ),
+                                    Math.max( GameContext.BLOCK_WIDTH, GameContext.BLOCK_HEIGHT ),
                                     false
                             )
                     );
@@ -141,11 +143,11 @@ public class FaceCaptureActivity extends AppCompatActivity {
     private class CapturedImagesListAdapter extends BaseAdapter {
 
         private Context context;
-        private LinkedList< Sprite > images;
+        private LinkedList< Bitmap > images;
 
         public CapturedImagesListAdapter( Context context, ImagePack images ) {
             this.context = context;
-            this.images = new LinkedList< Sprite >( images.values() );
+            this.images = new LinkedList< Bitmap >( images.values() );
         }
 
         @Override
@@ -154,13 +156,13 @@ public class FaceCaptureActivity extends AppCompatActivity {
         }
 
         @Override
-        public Sprite getItem( int i ) {
+        public Bitmap getItem( int i ) {
             return images.get( i );
         }
 
         @Override
         public long getItemId( int i ) {
-            return getItem( i ).getGroupId();
+            return i;
         }
 
         @Override
@@ -169,7 +171,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
                                         .from( context )
                                         .inflate( R.layout.image_pack_item_layout, null );
             ( ( ImageView ) layout.findViewById( R.id.image_pack_image ) )
-                                        .setImageBitmap( getItem( i ).getImage() );
+                                        .setImageBitmap( getItem( i ) );
             ( ( Button ) layout.findViewById( R.id.image_pack_remove ) )
                                         .setOnClickListener( new RemoveOnClickListener( getItem( i ) ) );
             ( ( Button ) layout.findViewById( R.id.image_pack_edit ) )
@@ -226,15 +228,15 @@ public class FaceCaptureActivity extends AppCompatActivity {
 
     private class EditOnClickListener implements  View.OnClickListener {
 
-        private Sprite image;
+        private Bitmap image;
 
-        public EditOnClickListener( Sprite image ) {
+        public EditOnClickListener( Bitmap image ) {
             this.image = image;
         }
 
         @Override
         public void onClick( View view ) {
-            EditContext.IMAGE_TO_EDIT = image.getImage();
+            EditContext.IMAGE_TO_EDIT = image;
             Intent editPictureIntent = new Intent( getApplicationContext(), FaceEditActivity.class );
             editPictureIntent.setData( picUri );
             startActivityForResult( editPictureIntent, EDIT_PICTURE_CODE );
@@ -244,18 +246,28 @@ public class FaceCaptureActivity extends AppCompatActivity {
 
     private class RemoveOnClickListener implements  View.OnClickListener {
 
-        private Sprite image;
+        private Bitmap image;
 
-        public RemoveOnClickListener( Sprite image ) {
+        public RemoveOnClickListener( Bitmap image ) {
             this.image = image;
         }
 
         @Override
         public void onClick( View view ) {
-            createdImages.remove( image.getGroupId() );
+            createdImages.remove( image );
             capturedImages.setAdapter(
                     listAdapter = new CapturedImagesListAdapter( getApplicationContext(), createdImages )
             );
+        }
+
+    }
+
+    private class SaveOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick( View view ) {
+            GameContext.IMAGES = createdImages.getImagesArray();
+            startActivity( new Intent( getApplicationContext(), GameActivity.class ) );
         }
 
     }

@@ -3,17 +3,15 @@ package com.badgames.jackslettebak.walloffaces;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.Window;
 
-import com.badgames.jackslettebak.framework.WOFView;
-import com.badgames.jackslettebak.utilities.Globals;
+import com.badgames.jackslettebak.game.WOFView;
+import com.badgames.jackslettebak.game.GameContext;
 
 import java.lang.reflect.Method;
 
@@ -34,42 +32,40 @@ public class MainActivity extends AppCompatActivity {
             //new pleasant way to get real metrics
             DisplayMetrics realMetrics = new DisplayMetrics();
             display.getRealMetrics( realMetrics );
-            Globals.SCREEN_WIDTH = realMetrics.widthPixels;
-            Globals.SCREEN_HEIGHT = realMetrics.heightPixels;
+            GameContext.SCREEN_WIDTH = realMetrics.widthPixels;
+            GameContext.SCREEN_HEIGHT = realMetrics.heightPixels;
 
         } else if ( Build.VERSION.SDK_INT >= 14 ) {
             //reflection for this weird in-between time
             try {
                 Method mGetRawH = Display.class.getMethod( "getRawHeight" );
                 Method mGetRawW = Display.class.getMethod( "getRawWidth" );
-                Globals.SCREEN_WIDTH = ( Integer ) mGetRawW.invoke( display );
-                Globals.SCREEN_HEIGHT = ( Integer ) mGetRawH.invoke( display );
+                GameContext.SCREEN_WIDTH = ( Integer ) mGetRawW.invoke( display );
+                GameContext.SCREEN_HEIGHT = ( Integer ) mGetRawH.invoke( display );
             } catch ( Exception e ) {
                 //this may not be 100% accurate, but it's all we've got
-                Globals.SCREEN_WIDTH = display.getWidth();
-                Globals.SCREEN_HEIGHT = display.getHeight();
+                GameContext.SCREEN_WIDTH = display.getWidth();
+                GameContext.SCREEN_HEIGHT = display.getHeight();
                 Log.e( "Display Info", "Couldn't use reflection to get the real display metrics." );
             }
 
         } else {
             //This should be close, as lower API devices should not have window navigation bars
-            Globals.SCREEN_WIDTH = display.getWidth();
-            Globals.SCREEN_HEIGHT = display.getHeight();
+            GameContext.SCREEN_WIDTH = display.getWidth();
+            GameContext.SCREEN_HEIGHT = display.getHeight();
         }
 
-        Globals.SCREEN_HEIGHT -= 100;
-        Globals.SCREEN_DENSITY = getResources().getDisplayMetrics().density;
-        Globals.BLOCK_HEIGHT = Globals.SCREEN_HEIGHT / Globals.N_BLOCKS_Y;
-        Globals.BLOCK_WIDTH = Globals.SCREEN_WIDTH / Globals.N_BLOCKS_X;
+        GameContext.SCREEN_HEIGHT -= 100;
+        GameContext.SCREEN_DENSITY = getResources().getDisplayMetrics().density;
+        GameContext.BLOCK_HEIGHT = GameContext.SCREEN_HEIGHT / GameContext.N_BLOCKS_Y;
+        GameContext.BLOCK_WIDTH = GameContext.SCREEN_WIDTH / GameContext.N_BLOCKS_X;
 
-        Globals.IMAGES = new Bitmap[ DEFAULT_IMAGES.length ];
+        GameContext.IMAGES = new Bitmap[ DEFAULT_IMAGES.length ];
         for( int i = 0; i < DEFAULT_IMAGES.length; i++ )
-            Globals.IMAGES[ i ] = BitmapFactory.decodeResource( getResources(),
+            GameContext.IMAGES[ i ] = BitmapFactory.decodeResource( getResources(),
                                                                 DEFAULT_IMAGES[ i ] );
 
         startActivity( new Intent( this, FaceCaptureActivity.class ) );
-        setContentView( new WOFView( this ) );
-
     }
 
 }

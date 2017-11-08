@@ -8,13 +8,10 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.SeekBar;
-import android.widget.Toast;
 
-import com.badgames.jackslettebak.utilities.Globals;
+import com.badgames.jackslettebak.game.GameContext;
 
 /**
  * Created by Jack Slettebak on 10/30/2017.
@@ -25,22 +22,21 @@ public class FaceCropView extends SurfaceView
 
     private final static Point CROP_SIZE_INTERVAL = new Point( 50, 50 );
     private final static Point DEFAULT_CROP_SIZE = new Point( 300, 300 );
-    private final static Point MAX_CROP_SIZE = new Point( 400, 400 );
+    private final static Point MAX_CROP_SIZE = new Point( 500, 500 );
     private final static Point MIN_CROP_SIZE = new Point( 200, 200 );
 
     private Bitmap background, cropper;
     private Paint paint;
     private Point cropSize = new Point( DEFAULT_CROP_SIZE );
     private PointF location;
-    private ScaleGestureDetector scaleGestureDetector;
 
     public FaceCropView( Context context, Bitmap image, Bitmap cropImage ) {
         super( context );
 
-        this.background = Bitmap.createScaledBitmap( image, Globals.SCREEN_WIDTH, Globals.SCREEN_HEIGHT, false );
+        this.background = Bitmap.createScaledBitmap( image, GameContext.SCREEN_WIDTH, GameContext.SCREEN_HEIGHT, false );
         this.cropper = Bitmap.createScaledBitmap( cropImage, cropSize.x, cropSize.y, false );
-        this.location = new PointF( ( Globals.SCREEN_WIDTH - cropSize.x ) / 2,
-                ( Globals.SCREEN_HEIGHT - cropSize.y ) / 2 );
+        this.location = new PointF( ( GameContext.SCREEN_WIDTH - cropSize.x ) / 2,
+                ( GameContext.SCREEN_HEIGHT - cropSize.y ) / 2 );
         this.paint = new Paint();
 
         setBackgroundColor( Color.TRANSPARENT );
@@ -82,7 +78,7 @@ public class FaceCropView extends SurfaceView
     }
 
     public Bitmap getCroppedBitmap() {
-        return Bitmap.createBitmap( background, ( int )location.x, ( int ) location.y,
+        return Bitmap.createBitmap( background, ( int ) location.x, ( int ) location.y,
                                     cropper.getWidth(), cropper.getHeight() );
     }
 
@@ -91,12 +87,6 @@ public class FaceCropView extends SurfaceView
         location.x = motionEvent.getX();
         location.y = motionEvent.getY();
         requestDraw();
-        return true;
-    }
-
-    @Override
-    public boolean onTouchEvent( MotionEvent ev ) {
-        scaleGestureDetector.onTouchEvent( ev );
         return true;
     }
 

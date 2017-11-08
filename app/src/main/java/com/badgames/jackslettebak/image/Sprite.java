@@ -2,8 +2,6 @@ package com.badgames.jackslettebak.image;
 
 import android.graphics.Bitmap;
 
-import com.badgames.jackslettebak.utilities.Globals.Group;
-
 /**
  * Created by Jack Slettebak on 10/22/2017.
  */

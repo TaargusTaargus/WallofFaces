@@ -16,8 +16,8 @@ import android.widget.SeekBar;
 import com.badgames.jackslettebak.image.EditContext;
 import com.badgames.jackslettebak.image.FaceCropView;
 import com.badgames.jackslettebak.image.FaceEditView;
-import com.badgames.jackslettebak.utilities.Globals;
-import com.badgames.jackslettebak.utilities.Globals.Group;
+import com.badgames.jackslettebak.game.GameContext;
+import com.badgames.jackslettebak.game.GameContext.Group;
 
 /**
  * Created by Jack Slettebak on 11/5/2017.
@@ -109,8 +109,8 @@ public class FaceEditActivity extends Activity {
             imageView.setOnClickListener( new BackgroundOnClickListener( background, imageView ) );
             imageView.setLayoutParams( new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT ) );
             imageView.setPadding(
-                    ( int ) Globals.SCREEN_DENSITY * 10, ( int ) Globals.SCREEN_DENSITY * 10,
-                    ( int ) Globals.SCREEN_DENSITY * 10, ( int ) Globals.SCREEN_DENSITY * 10
+                    ( int ) GameContext.SCREEN_DENSITY * 10, ( int ) GameContext.SCREEN_DENSITY * 10,
+                    ( int ) GameContext.SCREEN_DENSITY * 10, ( int ) GameContext.SCREEN_DENSITY * 10
             );
             backgroundLayout.addView( imageView );
             if( background == start )

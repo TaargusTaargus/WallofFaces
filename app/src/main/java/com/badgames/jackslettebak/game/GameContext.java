@@ -1,4 +1,4 @@
-package com.badgames.jackslettebak.utilities;
+package com.badgames.jackslettebak.game;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,13 +7,14 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import com.badgames.jackslettebak.image.ImagePack;
 import com.badgames.jackslettebak.walloffaces.R;
 
 /**
  * Created by Jack Slettebak on 10/16/2017.
  */
 
-public class Globals {
+public class GameContext {
     public static int SCREEN_HEIGHT = 0;
     public static int SCREEN_WIDTH = 0;
     public static int BLOCK_HEIGHT = 0;
@@ -27,6 +28,8 @@ public class Globals {
             Color.RED,
             Color.BLUE
     };
+
+    public static ImagePack gameImages;
 
     public enum Group {
         BLUE( R.drawable.blue_background ),

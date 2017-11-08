@@ -1,11 +1,10 @@
-package com.badgames.jackslettebak.framework;
+package com.badgames.jackslettebak.game;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 
 import com.badgames.jackslettebak.image.Sprite;
-import com.badgames.jackslettebak.utilities.Globals;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -62,7 +61,7 @@ public class Wall {
                                                   spriteHeight,
                                                   false
                                           ),
-                                          Globals.BACKGROUNDS[ type ]
+                                          GameContext.BACKGROUNDS[ type ]
                                   ),
                     type
             );
@@ -145,8 +144,8 @@ public class Wall {
     }
 
     private void selectRecursive( Float x, Float y, final Integer type, SelectList list ) {
-        if( x > Globals.SCREEN_WIDTH || x < 0.f
-                || y > Globals.SCREEN_HEIGHT || y < 0.f )
+        if( x > GameContext.SCREEN_WIDTH || x < 0.f
+                || y > GameContext.SCREEN_HEIGHT || y < 0.f )
             return;
 
         Face select = getFaceFromCoordinates( x, y );

@@ -1,18 +1,11 @@
-package com.badgames.jackslettebak.framework;
+package com.badgames.jackslettebak.game;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
-
-import com.badgames.jackslettebak.utilities.Globals;
-import com.badgames.jackslettebak.walloffaces.MainActivity;
 
 /**
  * Created by Jack Slettebak on 10/16/2017.
@@ -25,9 +18,9 @@ public class WOFView extends SurfaceView
 
     public WOFView( Context context ) {
         super( context );
-        this.game = new Wall( Globals.N_BLOCKS_X, Globals.N_BLOCKS_Y,
-                                Globals.BLOCK_WIDTH, Globals.BLOCK_HEIGHT,
-                                Globals.IMAGES );
+        this.game = new Wall( GameContext.N_BLOCKS_X, GameContext.N_BLOCKS_Y,
+                                GameContext.BLOCK_WIDTH, GameContext.BLOCK_HEIGHT,
+                                GameContext.IMAGES );
         this.game.init();
         setBackgroundColor( Color.WHITE );
         setOnTouchListener( this );

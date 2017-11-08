@@ -1,4 +1,4 @@
-package com.badgames.jackslettebak.framework;
+package com.badgames.jackslettebak.game;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

@@ -6,8 +6,11 @@
     <string name="save_final_capture_image">Save</string>
     <string name="image_pack_edit_string">Edit</string>
     <string name="image_pack_remove_string">Remove</string>
-    <string name="image_pack_list_header">Captured Images:</string>
+    <string name="image_pack_list_header">CAPTURED IMAGES</string>
     <string name="decrease_crop_size_button_text">-</string>
     <string name="increase_crop_size_button_text">+</string>
     <string name="save_image_list_button_text">Save Images</string>
+    <string name="background_button_label">Background Color:</string>
+    <string name="border_button_label">Border Color:</string>
+    <string name="color_picker_dialog_title">Select a Color:</string>
 </resources>

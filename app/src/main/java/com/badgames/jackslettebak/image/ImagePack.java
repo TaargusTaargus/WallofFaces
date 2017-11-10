@@ -10,18 +10,12 @@ import java.util.Set;
  * Created by Jack Slettebak on 10/28/2017.
  */
 
-public class ImagePack extends HashMap <Integer, Bitmap > {
+public class ImagePack extends LinkedList< Bitmap > {
 
     private int groupId = 0;
 
-    public void addImage( Bitmap image ) {
-        super.put( groupId, image );
-        groupId += 1;
-    }
-
     public Bitmap [] getImagesArray() {
-        LinkedList<Bitmap> images = new LinkedList< Bitmap >( values() );
-        return images.toArray( new Bitmap[ images.size() ] );
+        return toArray( new Bitmap[ size() ] );
     }
 
 }

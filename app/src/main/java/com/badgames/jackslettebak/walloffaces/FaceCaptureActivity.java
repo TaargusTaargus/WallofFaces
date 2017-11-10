@@ -45,7 +45,6 @@ public class FaceCaptureActivity extends AppCompatActivity {
     final String URI_CAMERA_AUTHORITY = "com.badgames.wof";
 
     private Button browse, camera, save;
-    private CapturedImagesListAdapter listAdapter;
     private ImagePack createdImages = new ImagePack();
     private ListView capturedImages;
     private Uri picUri;
@@ -63,11 +62,12 @@ public class FaceCaptureActivity extends AppCompatActivity {
 
         capturedImages = ( ListView ) findViewById( R.id.image_pack_list );
         capturedImages.setAdapter(
-                listAdapter = new CapturedImagesListAdapter( this, createdImages )
+                new CapturedImagesListAdapter( this, createdImages )
         );
 
         save = ( Button ) findViewById( R.id.save_image_list_button );
         save.setOnClickListener( new SaveOnClickListener() );
+        save.setEnabled( false );
     }
 
     @Override
@@ -88,7 +88,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
                     startActivityForResult( editPictureIntent, EDIT_PICTURE_CODE );
                     break;
                 case EDIT_PICTURE_CODE:
-                    createdImages.addImage(
+                    createdImages.add(
                             Bitmap.createScaledBitmap(
                                     EditContext.EDITTED_IMAGE,
                                     Math.max( GameContext.BLOCK_WIDTH, GameContext.BLOCK_HEIGHT ),
@@ -96,8 +96,9 @@ public class FaceCaptureActivity extends AppCompatActivity {
                                     false
                             )
                     );
+                    save.setEnabled( ! createdImages.isEmpty() );
                     capturedImages.setAdapter(
-                            listAdapter = new CapturedImagesListAdapter( getApplicationContext(), createdImages )
+                            new CapturedImagesListAdapter( getApplicationContext(), createdImages )
                     );
                     break;
             }
@@ -143,11 +144,11 @@ public class FaceCaptureActivity extends AppCompatActivity {
     private class CapturedImagesListAdapter extends BaseAdapter {
 
         private Context context;
-        private LinkedList< Bitmap > images;
+        private ImagePack images;
 
         public CapturedImagesListAdapter( Context context, ImagePack images ) {
             this.context = context;
-            this.images = new LinkedList< Bitmap >( images.values() );
+            this.images = images;
         }
 
         @Override
@@ -237,6 +238,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
         @Override
         public void onClick( View view ) {
             EditContext.IMAGE_TO_EDIT = image;
+            createdImages.remove( image );
             Intent editPictureIntent = new Intent( getApplicationContext(), FaceEditActivity.class );
             editPictureIntent.setData( picUri );
             startActivityForResult( editPictureIntent, EDIT_PICTURE_CODE );
@@ -255,8 +257,9 @@ public class FaceCaptureActivity extends AppCompatActivity {
         @Override
         public void onClick( View view ) {
             createdImages.remove( image );
+            save.setEnabled( ! createdImages.isEmpty() );
             capturedImages.setAdapter(
-                    listAdapter = new CapturedImagesListAdapter( getApplicationContext(), createdImages )
+                    new CapturedImagesListAdapter( getApplicationContext(), createdImages )
             );
         }
 

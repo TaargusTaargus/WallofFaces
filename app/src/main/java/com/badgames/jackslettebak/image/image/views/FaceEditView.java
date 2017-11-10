@@ -1,4 +1,4 @@
-package com.badgames.jackslettebak.image;
+package com.badgames.jackslettebak.image.image.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -26,22 +26,19 @@ public class FaceEditView extends SurfaceView
     public final int MAX_ERASER_RADIUS = ( int ) GameContext.SCREEN_DENSITY * 16;
     public final int MIN_ERASER_RADIUS = ( int ) GameContext.SCREEN_DENSITY * 2;
 
-    private Bitmap background, image;
+    private Bitmap background, border, image;
     private Integer eraserSize;
-    private Paint eraserPaint, backgroundPaint, imagePaint;
+    private Paint eraserPaint, imagePaint;
     private PointF location, bounds, eraser;
 
-    public FaceEditView(Context context, Bitmap imageToEdit, Bitmap border ) {
+    public FaceEditView(Context context, Bitmap imageToEdit ) {
         super( context );
-        this.background = border;
-        this.backgroundPaint = new Paint();
         this.eraser = new PointF( 0.f, 0.f );
         this.eraserPaint = new Paint();
         this.eraserSize = DEFAULT_ERASER_RADIUS;
         this.image = imageToEdit;
         this.imagePaint = new Paint();
         this.location = new PointF( 0.f, 0.f );
-
 
         eraserPaint.setColor( Color.WHITE );
         image.setHasAlpha( true );
@@ -50,13 +47,12 @@ public class FaceEditView extends SurfaceView
             @Override
             public boolean onPreDraw() {
                 getViewTreeObserver().removeOnPreDrawListener( this );
-                background = Bitmap.createScaledBitmap( background, getWidth(), getHeight(), false );
                 image = Bitmap.createScaledBitmap( image, getWidth(), getHeight(), false );
                 bounds = new PointF( image.getWidth(), image.getHeight() );
                 return true;
             }
         } );
-        setBackgroundColor( Color.GRAY );
+        setBackgroundColor( Color.WHITE );
         setOnTouchListener( this );
 
         requestDraw();
@@ -87,9 +83,14 @@ public class FaceEditView extends SurfaceView
 
     public void draw( Canvas canvas ) {
         super.draw( canvas );
+        if( background != null )
+            canvas.drawBitmap( background, 0.f, 0.f, imagePaint );
+
         canvas.drawBitmap( image, location.x, location.y, imagePaint );
         canvas.drawCircle( eraser.x, eraser.y, eraserSize, eraserPaint );
-        canvas.drawBitmap( background, location.x, location.y, backgroundPaint );
+
+        if( border != null )
+            canvas.drawBitmap( border, location.x, location.y, imagePaint );
     }
 
     public void requestDraw() {
@@ -125,16 +126,25 @@ public class FaceEditView extends SurfaceView
         return true;
     }
 
-    public Bitmap getFinalImage() {
+    public Bitmap getEdittedImage() {
         Bitmap finalImage = Bitmap.createBitmap( ( int ) bounds.x, ( int ) bounds.y, Bitmap.Config.ARGB_8888 );
         Canvas canvas = new Canvas( finalImage );
         super.draw( canvas );
+        canvas.drawBitmap( background, 0.f, 0.f, imagePaint );
         canvas.drawBitmap( image, location.x, location.y, imagePaint );
-        canvas.drawBitmap( background, location.x, location.y, backgroundPaint );
+        canvas.drawBitmap( border, location.x, location.y, imagePaint );
         return finalImage;
     }
 
-    public void setBackgroundImage( Bitmap image ) { background = Bitmap.createScaledBitmap( image, getWidth(), getHeight(), false ); }
+    public void setBackgroundImage( Bitmap image ) {
+        background = Bitmap.createScaledBitmap( image, ( int ) bounds.x, ( int ) bounds.y, false );
+        requestDraw();
+    }
+
+    public void setBorderImage( Bitmap image ) {
+        border = Bitmap.createScaledBitmap( image, ( int ) bounds.x, ( int ) bounds.y, false );
+        requestDraw();
+    }
 
 }
 

@@ -1,4 +1,4 @@
-package com.badgames.jackslettebak.image;
+package com.badgames.jackslettebak.image.image.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -28,7 +28,7 @@ public class FaceCropView extends SurfaceView
     private Bitmap background, cropper;
     private Paint paint;
     private Point cropSize = new Point( DEFAULT_CROP_SIZE );
-    private PointF location;
+    private PointF location, offset;
 
     public FaceCropView( Context context, Bitmap image, Bitmap cropImage ) {
         super( context );
@@ -37,6 +37,7 @@ public class FaceCropView extends SurfaceView
         this.cropper = Bitmap.createScaledBitmap( cropImage, cropSize.x, cropSize.y, false );
         this.location = new PointF( ( GameContext.SCREEN_WIDTH - cropSize.x ) / 2,
                 ( GameContext.SCREEN_HEIGHT - cropSize.y ) / 2 );
+        this.offset = new PointF( - cropSize.x / 2, - cropSize.y / 2 );
         this.paint = new Paint();
 
         setBackgroundColor( Color.TRANSPARENT );
@@ -65,27 +66,33 @@ public class FaceCropView extends SurfaceView
     public void adjustCropSize( Integer delta ) {
         cropSize = new Point(
                 Math.max(
-                        Math.min( cropSize.x + delta * CROP_SIZE_INTERVAL.x, MAX_CROP_SIZE.x ),
+                        Math.min( cropSize.x + delta * CROP_SIZE_INTERVAL.x, GameContext.SCREEN_WIDTH ),
                         MIN_CROP_SIZE.x
                 ),
                 Math.max(
-                        Math.min( cropSize.y + delta * CROP_SIZE_INTERVAL.y, MAX_CROP_SIZE.y ),
+                        Math.min( cropSize.y + delta * CROP_SIZE_INTERVAL.y, GameContext.SCREEN_HEIGHT ),
                         MIN_CROP_SIZE.y
                 )
         );
         cropper = Bitmap.createScaledBitmap( cropper, cropSize.x, cropSize.y, false );
+        this.offset = new PointF( - cropSize.x / 2, - cropSize.y / 2 );
         requestDraw();
     }
 
-    public Bitmap getCroppedBitmap() {
-        return Bitmap.createBitmap( background, ( int ) location.x, ( int ) location.y,
-                                    cropper.getWidth(), cropper.getHeight() );
+    public Bitmap getCroppedImage() {
+        return Bitmap.createBitmap(
+                background, ( int ) location.x, ( int ) location.y,
+                ( int ) ( location.x + cropper.getWidth() <= GameContext.SCREEN_WIDTH ?
+                            cropper.getWidth() : GameContext.SCREEN_WIDTH - location.x ),
+                ( int ) ( location.y + cropper.getHeight() <= GameContext.SCREEN_HEIGHT ?
+                            cropper.getHeight() : GameContext.SCREEN_HEIGHT - location.y )
+        );
     }
 
     @Override
     public boolean onTouch( View view, MotionEvent motionEvent ) {
-        location.x = motionEvent.getX();
-        location.y = motionEvent.getY();
+        location.x = motionEvent.getX() + offset.x;
+        location.y = motionEvent.getY() + offset.y;
         requestDraw();
         return true;
     }

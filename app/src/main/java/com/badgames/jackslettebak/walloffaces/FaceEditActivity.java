@@ -6,64 +6,54 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
-import com.badgames.jackslettebak.image.EditContext;
-import com.badgames.jackslettebak.image.FaceCropView;
-import com.badgames.jackslettebak.image.FaceEditView;
 import com.badgames.jackslettebak.game.GameContext;
+import com.badgames.jackslettebak.image.image.views.ColorPicker;
+import com.badgames.jackslettebak.image.image.views.ColorPicker.Colors;
+import com.badgames.jackslettebak.image.EditContext;
+import com.badgames.jackslettebak.image.image.views.FaceCropView;
+import com.badgames.jackslettebak.image.image.views.FaceEditView;
 import com.badgames.jackslettebak.game.GameContext.Group;
+import com.badgames.jackslettebak.utilities.ImageBuilder;
 
 /**
  * Created by Jack Slettebak on 11/5/2017.
  */
 
-public class FaceEditActivity extends Activity {
+public class FaceEditActivity extends Activity
+    implements ColorPicker.ColorPickerCallback {
 
-    public enum Cropper {
-        RECTANGLE( R.drawable.rectangle_selector );
-
-        Integer drawable;
-
-        Cropper( Integer drawable ) {
-            this.drawable = drawable;
-        }
-
-        public Bitmap getBitmap( Context context ) {
-            return BitmapFactory.decodeResource( context.getResources(), drawable );
-        }
-    }
-
-
-    private Group[] availableBackgrounds = Group.values();
     private Button crop, save;
-    private Cropper cropBorder = Cropper.RECTANGLE;
+    private ColorPicker backgroundPicker, borderPicker;
     private FaceCropView cropView;
     private FaceEditView editView;
-    private ImageView selectedBackground;
-    private LinearLayout editLayout, backgroundLayout;
+    private ImageButton background, border;
+    private LinearLayout editLayout;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.crop_view_layout);
+        setContentView( R.layout.crop_view_layout );
 
-
-        loadCropLayout();
+        loadCropView();
     }
 
-    private void loadCropLayout() {
+    private void loadCropView() {
         crop = ( Button ) findViewById( R.id.face_crop_button );
         crop.setOnClickListener( new View.OnClickListener() {
 
             @Override
             public void onClick( View view ) {
-                loadTransparentLayout();
+                loadEditView();
             }
 
         } );
@@ -73,7 +63,14 @@ public class FaceEditActivity extends Activity {
                 cropView = new FaceCropView(
                         this,
                         EditContext.IMAGE_TO_EDIT,
-                        cropBorder.getBitmap( this )
+                        ImageBuilder.buildBorderImage(
+                                Colors.DARK_GRAY,
+                                new PointF( GameContext.BLOCK_WIDTH, GameContext.BLOCK_HEIGHT ),
+                                new PointF(
+                                        GameContext.SCREEN_DENSITY * ImageBuilder.BORDER_THICKNESS,
+                                        GameContext.SCREEN_DENSITY * ImageBuilder.BORDER_THICKNESS
+                                )
+                        )
                 ),
                 new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -88,67 +85,75 @@ public class FaceEditActivity extends Activity {
                 .setOnClickListener( new CropAdjustClickListener( -1 ) );
     }
 
-    private void loadTransparentLayout () {
-        setContentView( R.layout.edit_view_layout);
-        Group start = availableBackgrounds[ 0 ];
+    private void loadEditView() {
+        setContentView( R.layout.edit_view_layout );
+
+        background = ( ImageButton ) findViewById( R.id.background_color_button );
+        background.setOnClickListener( new BackgroundOnClickListener() );
+
+        border = ( ImageButton ) findViewById( R.id.border_color_button );
+        border.setOnClickListener( new BorderOnClickListener() );
+
         editLayout = ( LinearLayout ) findViewById( R.id.edit_picture_layout );
         editLayout.addView(
                 editView = new FaceEditView(
                         getApplicationContext(),
-                        cropView.getCroppedBitmap(),
-                        start.getBitmap( getApplicationContext() )
+                        cropView.getCroppedImage()
                 )
         );
         editView.attachSeekBar( ( SeekBar ) findViewById( R.id.eraser_size ) );
         editView.requestDraw();
 
-        backgroundLayout = ( LinearLayout ) findViewById( R.id.background_options );
-        for( Group background : availableBackgrounds ) {
-            ImageView imageView = new ImageView( this );
-            imageView.setImageDrawable( background.getDrawable( this ) );
-            imageView.setOnClickListener( new BackgroundOnClickListener( background, imageView ) );
-            imageView.setLayoutParams( new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT ) );
-            imageView.setPadding(
-                    ( int ) GameContext.SCREEN_DENSITY * 10, ( int ) GameContext.SCREEN_DENSITY * 10,
-                    ( int ) GameContext.SCREEN_DENSITY * 10, ( int ) GameContext.SCREEN_DENSITY * 10
-            );
-            backgroundLayout.addView( imageView );
-            if( background == start )
-                ( selectedBackground = imageView ).setBackgroundColor( Color.GRAY );
-        }
-
         save = ( Button ) findViewById( R.id.save_image );
         save.setOnClickListener( new SaveOnClickListener() );
     }
 
-    private class SaveOnClickListener implements View.OnClickListener {
+    public void setColorFromPicker( Colors color ) {
+        if( backgroundPicker != null ) {
+            Bitmap image = ImageBuilder.buildBackgroundImage(
+                    color,
+                    new PointF( GameContext.BLOCK_WIDTH, GameContext.BLOCK_HEIGHT )
+            );
+
+            editView.setBackgroundImage( image );
+            background.setImageDrawable( new BitmapDrawable( getResources(), image ) );
+        }
+
+        if( borderPicker != null ) {
+            Bitmap image = ImageBuilder.buildBorderImage(
+                    color,
+                    new PointF( GameContext.BLOCK_WIDTH, GameContext.BLOCK_HEIGHT ),
+                    new PointF(
+                            GameContext.SCREEN_DENSITY * ImageBuilder.BORDER_THICKNESS,
+                            GameContext.SCREEN_DENSITY * ImageBuilder.BORDER_THICKNESS
+                    )
+            );
+
+            editView.setBorderImage( image );
+            border.setImageDrawable( new BitmapDrawable( getResources(), image ) );
+        }
+
+        backgroundPicker = borderPicker = null;
+    }
+
+
+    // event listeners
+    private class BackgroundOnClickListener implements  View.OnClickListener {
 
         @Override
         public void onClick( View view ) {
-            Intent result = new Intent();
-            EditContext.EDITTED_IMAGE = editView.getFinalImage();
-            setResult( RESULT_OK, result );
-            finish();
+            backgroundPicker = new ColorPicker();
+            backgroundPicker.show( getFragmentManager(), "color_picker" );
         }
 
     }
 
-    private class BackgroundOnClickListener implements  View.OnClickListener {
-
-        private Group background;
-        private ImageView imageView;
-
-        public BackgroundOnClickListener( Group background, ImageView imageView ) {
-            this.background = background;
-            this.imageView = imageView;
-        }
+    private class BorderOnClickListener implements  View.OnClickListener {
 
         @Override
         public void onClick( View view ) {
-            selectedBackground.setBackgroundColor( Color.TRANSPARENT );
-            ( selectedBackground = imageView ).setBackgroundColor( Color.GRAY );
-            editView.setBackgroundImage( background.getBitmap( getApplicationContext() ) );
-            editView.requestDraw();
+            borderPicker = new ColorPicker();
+            borderPicker.show( getFragmentManager(), "color_picker" );
         }
 
     }
@@ -164,6 +169,18 @@ public class FaceEditActivity extends Activity {
         @Override
         public void onClick( View view ) {
             cropView.adjustCropSize( delta );
+        }
+
+    }
+
+    private class SaveOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick( View view ) {
+            Intent result = new Intent();
+            EditContext.EDITTED_IMAGE = editView.getEdittedImage();
+            setResult( RESULT_OK, result );
+            finish();
         }
 
     }

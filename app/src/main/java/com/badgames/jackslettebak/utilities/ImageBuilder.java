@@ -8,7 +8,7 @@ import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 
-import com.badgames.jackslettebak.game.GameContext;
+import com.badgames.jackslettebak.game.game.utilities.GameContext;
 import com.badgames.jackslettebak.image.image.views.ColorPicker.Colors;
 
 /**
@@ -17,12 +17,13 @@ import com.badgames.jackslettebak.image.image.views.ColorPicker.Colors;
 
 public class ImageBuilder {
 
-    public static final int BORDER_THICKNESS = 1;
+    public static final int BORDER_THICKNESS = 3;
+    public static final int DEFAULT_SIZE_IMAGE = 100;
 
     public static Bitmap buildBackgroundImage( Colors color, PointF size ) {
         Bitmap background = Bitmap.createBitmap(
-                GameContext.BLOCK_WIDTH,
-                GameContext.BLOCK_HEIGHT,
+                ImageBuilder.DEFAULT_SIZE_IMAGE,
+                ImageBuilder.DEFAULT_SIZE_IMAGE,
                 Bitmap.Config.ARGB_8888
         );
         Canvas canvas = new Canvas( background );

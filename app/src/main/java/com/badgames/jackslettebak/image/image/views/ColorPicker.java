@@ -36,7 +36,7 @@ public class ColorPicker extends DialogFragment {
     public enum Colors {
 
         TRANSPARENT( Color.TRANSPARENT, "No Color" ),
-        BLACK( Color.BLACK, "White" ),
+        BLACK( Color.BLACK, "Black" ),
         DARK_BLUE( 0xff087ca3, "Dark Blue" ),
         DARK_GRAY( 0xff484848, "Dark Grey" ),
         DARK_GREEN( 0xff2d8e09, "Dark Green" ),

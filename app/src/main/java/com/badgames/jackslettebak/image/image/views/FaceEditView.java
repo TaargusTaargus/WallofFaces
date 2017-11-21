@@ -13,7 +13,11 @@ import android.view.ViewTreeObserver;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.badgames.jackslettebak.game.GameContext;
+import com.badgames.jackslettebak.game.game.utilities.GameContext;
+import com.badgames.jackslettebak.utilities.DrawTask;
+
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jack Slettebak on 10/31/2017.
@@ -31,7 +35,7 @@ public class FaceEditView extends SurfaceView
     private Paint eraserPaint, imagePaint;
     private PointF location, bounds, eraser;
 
-    public FaceEditView(Context context, Bitmap imageToEdit ) {
+    public FaceEditView( Context context, Bitmap imageToEdit ) {
         super( context );
         this.eraser = new PointF( 0.f, 0.f );
         this.eraserPaint = new Paint();
@@ -55,7 +59,13 @@ public class FaceEditView extends SurfaceView
         setBackgroundColor( Color.WHITE );
         setOnTouchListener( this );
 
-        requestDraw();
+        ( new ScheduledThreadPoolExecutor( 1 ) )
+                .scheduleAtFixedRate(
+                        new DrawTask( this ),
+                        0l,
+                        GameContext.FRAMES_PER_SECOND,
+                        TimeUnit.MILLISECONDS
+                );
     }
 
 
@@ -93,18 +103,6 @@ public class FaceEditView extends SurfaceView
             canvas.drawBitmap( border, location.x, location.y, imagePaint );
     }
 
-    public void requestDraw() {
-        Canvas canvas = null;
-        try {
-            canvas = getHolder().lockCanvas();
-            postInvalidate();
-        } finally {
-            if ( canvas != null ) {
-                getHolder().unlockCanvasAndPost( canvas );
-            }
-        }
-    }
-
     @Override
     public boolean onTouch( View view, MotionEvent motionEvent ) {
         eraser.set( motionEvent.getX(), motionEvent.getY() );
@@ -121,8 +119,6 @@ public class FaceEditView extends SurfaceView
                 }
             }
         }
-
-        requestDraw();
         return true;
     }
 
@@ -130,20 +126,23 @@ public class FaceEditView extends SurfaceView
         Bitmap finalImage = Bitmap.createBitmap( ( int ) bounds.x, ( int ) bounds.y, Bitmap.Config.ARGB_8888 );
         Canvas canvas = new Canvas( finalImage );
         super.draw( canvas );
-        canvas.drawBitmap( background, 0.f, 0.f, imagePaint );
+        if( background != null )
+            canvas.drawBitmap( background, 0.f, 0.f, imagePaint );
+
         canvas.drawBitmap( image, location.x, location.y, imagePaint );
-        canvas.drawBitmap( border, location.x, location.y, imagePaint );
+
+        if( border != null )
+            canvas.drawBitmap( border, location.x, location.y, imagePaint );
+
         return finalImage;
     }
 
     public void setBackgroundImage( Bitmap image ) {
         background = Bitmap.createScaledBitmap( image, ( int ) bounds.x, ( int ) bounds.y, false );
-        requestDraw();
     }
 
     public void setBorderImage( Bitmap image ) {
         border = Bitmap.createScaledBitmap( image, ( int ) bounds.x, ( int ) bounds.y, false );
-        requestDraw();
     }
 
 }

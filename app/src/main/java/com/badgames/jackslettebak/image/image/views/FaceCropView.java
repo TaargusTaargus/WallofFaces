@@ -11,7 +11,11 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 
-import com.badgames.jackslettebak.game.GameContext;
+import com.badgames.jackslettebak.game.game.utilities.GameContext;
+import com.badgames.jackslettebak.utilities.DrawTask;
+
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jack Slettebak on 10/30/2017.
@@ -42,6 +46,14 @@ public class FaceCropView extends SurfaceView
 
         setBackgroundColor( Color.TRANSPARENT );
         setOnTouchListener( this );
+
+        ( new ScheduledThreadPoolExecutor( 1 ) )
+                .scheduleAtFixedRate(
+                        new DrawTask( this ),
+                        0l,
+                        GameContext.FRAMES_PER_SECOND,
+                        TimeUnit.MILLISECONDS
+                );
     }
 
 
@@ -51,17 +63,6 @@ public class FaceCropView extends SurfaceView
         canvas.drawBitmap( cropper, location.x, location.y, paint );
     }
 
-    public void requestDraw() {
-        Canvas canvas = null;
-        try {
-            canvas = getHolder().lockCanvas();
-            postInvalidate();
-        } finally {
-            if ( canvas != null ) {
-                getHolder().unlockCanvasAndPost(canvas);
-            }
-        }
-    }
 
     public void adjustCropSize( Integer delta ) {
         cropSize = new Point(
@@ -76,7 +77,6 @@ public class FaceCropView extends SurfaceView
         );
         cropper = Bitmap.createScaledBitmap( cropper, cropSize.x, cropSize.y, false );
         this.offset = new PointF( - cropSize.x / 2, - cropSize.y / 2 );
-        requestDraw();
     }
 
     public Bitmap getCroppedImage() {
@@ -93,7 +93,6 @@ public class FaceCropView extends SurfaceView
     public boolean onTouch( View view, MotionEvent motionEvent ) {
         location.x = motionEvent.getX() + offset.x;
         location.y = motionEvent.getY() + offset.y;
-        requestDraw();
         return true;
     }
 

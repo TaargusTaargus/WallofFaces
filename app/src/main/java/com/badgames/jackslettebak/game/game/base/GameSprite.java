@@ -1,17 +1,18 @@
-package com.badgames.jackslettebak.game;
+package com.badgames.jackslettebak.game.game.base;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 
+import com.badgames.jackslettebak.game.game.base.Drawable;
 import com.badgames.jackslettebak.image.Sprite;
 
 /**
  * Created by Jack Slettebak on 10/16/2017.
  */
 
-public class Face {
+public class GameSprite implements Drawable {
 
     public final int SELECTED = 127;
     public final int DESELECTED = 255;
@@ -21,7 +22,7 @@ public class Face {
     private Paint paint, background;
     private PointF location;
 
-    public Face( PointF location, Sprite sprite, Integer type ) {
+    public GameSprite( PointF location, Sprite sprite, Integer type ) {
         this.image = sprite.getImage();
         this.location = location;
         this.paint = new Paint();

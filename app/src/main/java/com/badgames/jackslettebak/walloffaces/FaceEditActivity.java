@@ -1,28 +1,23 @@
 package com.badgames.jackslettebak.walloffaces;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
-import com.badgames.jackslettebak.game.GameContext;
+import com.badgames.jackslettebak.game.game.utilities.GameContext;
 import com.badgames.jackslettebak.image.image.views.ColorPicker;
 import com.badgames.jackslettebak.image.image.views.ColorPicker.Colors;
 import com.badgames.jackslettebak.image.EditContext;
 import com.badgames.jackslettebak.image.image.views.FaceCropView;
 import com.badgames.jackslettebak.image.image.views.FaceEditView;
-import com.badgames.jackslettebak.game.GameContext.Group;
 import com.badgames.jackslettebak.utilities.ImageBuilder;
 
 /**
@@ -102,7 +97,6 @@ public class FaceEditActivity extends Activity
                 )
         );
         editView.attachSeekBar( ( SeekBar ) findViewById( R.id.eraser_size ) );
-        editView.requestDraw();
 
         save = ( Button ) findViewById( R.id.save_image );
         save.setOnClickListener( new SaveOnClickListener() );

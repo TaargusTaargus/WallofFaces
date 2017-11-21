@@ -21,14 +21,13 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.badgames.jackslettebak.game.GameContext;
+import com.badgames.jackslettebak.game.game.utilities.GameContext;
 import com.badgames.jackslettebak.image.EditContext;
 import com.badgames.jackslettebak.image.ImagePack;
 import com.badgames.jackslettebak.utilities.Utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
 
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;

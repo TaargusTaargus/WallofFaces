@@ -10,8 +10,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 
-import com.badgames.jackslettebak.game.WOFView;
-import com.badgames.jackslettebak.game.GameContext;
+import com.badgames.jackslettebak.game.game.utilities.GameContext;
+import com.badgames.jackslettebak.utilities.ImageBuilder;
 
 import java.lang.reflect.Method;
 
@@ -55,17 +55,21 @@ public class MainActivity extends AppCompatActivity {
             GameContext.SCREEN_HEIGHT = display.getHeight();
         }
 
-        GameContext.SCREEN_HEIGHT -= 100;
         GameContext.SCREEN_DENSITY = getResources().getDisplayMetrics().density;
         GameContext.BLOCK_HEIGHT = GameContext.SCREEN_HEIGHT / GameContext.N_BLOCKS_Y;
         GameContext.BLOCK_WIDTH = GameContext.SCREEN_WIDTH / GameContext.N_BLOCKS_X;
+        GameContext.BLOCK_SWIPE_THRESHOLD_X = GameContext.BLOCK_WIDTH * GameContext.SWIPE_SENSITIVITY;
+        GameContext.BLOCK_SWIPE_THRESHOLD_Y = GameContext.BLOCK_HEIGHT * GameContext.SWIPE_SENSITIVITY;
 
         GameContext.IMAGES = new Bitmap[ DEFAULT_IMAGES.length ];
         for( int i = 0; i < DEFAULT_IMAGES.length; i++ )
-            GameContext.IMAGES[ i ] = BitmapFactory.decodeResource( getResources(),
-                                                                DEFAULT_IMAGES[ i ] );
+            GameContext.IMAGES[ i ] = BitmapFactory.decodeResource(
+                    getResources(),
+                    DEFAULT_IMAGES[ i ]
+            );
 
-        startActivity( new Intent( this, FaceCaptureActivity.class ) );
+        startActivity( new Intent( getApplicationContext(), GameActivity.class ) );
+        //startActivity( new Intent( this, FaceCaptureActivity.class ) );
     }
 
 }

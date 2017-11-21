@@ -1,4 +1,4 @@
-package com.badgames.jackslettebak.game;
+package com.badgames.jackslettebak.game.game.utilities;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,13 +15,19 @@ import com.badgames.jackslettebak.walloffaces.R;
  */
 
 public class GameContext {
+
     public static int SCREEN_HEIGHT = 0;
     public static int SCREEN_WIDTH = 0;
     public static int BLOCK_HEIGHT = 0;
     public static int BLOCK_WIDTH = 0;
-    public static final int N_BLOCKS_X = 8;
-    public static final int N_BLOCKS_Y = 10;
+    public static float SWIPE_SENSITIVITY = 3.f / 5.f;
+    public static float BLOCK_SWIPE_THRESHOLD_X = 0;
+    public static float BLOCK_SWIPE_THRESHOLD_Y = 0;
+    public static final int N_BLOCKS_X = 6;
+    public static final int N_BLOCKS_Y = 8;
     public static float SCREEN_DENSITY = 0;
+    public final static long FRAMES_PER_SECOND = ( long ) ( 1000 / 60 );
+    public static final int IMAGE_BORDER = 1;
     public static Bitmap [] IMAGES = null;
     public static int [] BACKGROUNDS = {
             Color.GREEN,

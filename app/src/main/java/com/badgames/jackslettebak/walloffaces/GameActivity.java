@@ -1,15 +1,11 @@
 package com.badgames.jackslettebak.walloffaces;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.badgames.jackslettebak.game.game.utilities.GameContext;
-import com.badgames.jackslettebak.game.game.views.WOFView;
-import com.badgames.jackslettebak.utilities.ImageBuilder;
+import com.badgames.jackslettebak.game.game.views.GameView;
 
 /**
  * Created by Jack Slettebak on 11/7/2017.
@@ -18,7 +14,7 @@ import com.badgames.jackslettebak.utilities.ImageBuilder;
 public class GameActivity extends Activity {
 
     private LinearLayout layout;
-    private WOFView gameView;
+    private GameView gameView;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -43,7 +39,7 @@ public class GameActivity extends Activity {
 
     private void loadGame() {
         layout = ( LinearLayout ) findViewById( R.id.game_screen );
-        layout.addView( gameView = new WOFView( this ) );
+        layout.addView( gameView = new GameView( this ) );
     }
 
 }

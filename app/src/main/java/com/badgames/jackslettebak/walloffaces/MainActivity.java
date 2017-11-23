@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 
 import com.badgames.jackslettebak.game.game.utilities.GameContext;
 import com.badgames.jackslettebak.utilities.ImageBuilder;
@@ -61,14 +62,35 @@ public class MainActivity extends AppCompatActivity {
         GameContext.BLOCK_SWIPE_THRESHOLD_X = GameContext.BLOCK_WIDTH * GameContext.SWIPE_SENSITIVITY;
         GameContext.BLOCK_SWIPE_THRESHOLD_Y = GameContext.BLOCK_HEIGHT * GameContext.SWIPE_SENSITIVITY;
 
-        GameContext.IMAGES = new Bitmap[ DEFAULT_IMAGES.length ];
-        for( int i = 0; i < DEFAULT_IMAGES.length; i++ )
-            GameContext.IMAGES[ i ] = BitmapFactory.decodeResource(
-                    getResources(),
-                    DEFAULT_IMAGES[ i ]
-            );
+        if( GameContext.IMAGES == null ) {
+            GameContext.IMAGES = new Bitmap[ DEFAULT_IMAGES.length ];
+            for ( int i = 0; i < DEFAULT_IMAGES.length; i++ )
+                GameContext.IMAGES[ i ] = BitmapFactory.decodeResource(
+                        getResources(),
+                        DEFAULT_IMAGES[ i ]
+                );
+        }
 
-        startActivity( new Intent( getApplicationContext(), GameActivity.class ) );
+        setContentView( R.layout.main_activity_layout );
+        findViewById( R.id.main_menu_start_game_button )
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick( View view ) {
+                                startActivity( new Intent( getApplicationContext(), GameActivity.class ) );
+                            }
+                        }
+                );
+
+        findViewById( R.id.main_menu_capture_images_button )
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick( View view ) {
+                                startActivity( new Intent( getApplicationContext(), FaceCaptureActivity.class ) );
+                            }
+                        }
+                );
         //startActivity( new Intent( this, FaceCaptureActivity.class ) );
     }
 

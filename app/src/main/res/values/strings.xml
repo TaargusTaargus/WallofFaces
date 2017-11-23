@@ -13,4 +13,6 @@
     <string name="background_button_label">Background Color:</string>
     <string name="border_button_label">Border Color:</string>
     <string name="color_picker_dialog_title">Select a Color:</string>
+    <string name="main_menu_start_game_button">Start Game</string>
+    <string name="main_menu_capture_images_button">Create Image Pack</string>
 </resources>

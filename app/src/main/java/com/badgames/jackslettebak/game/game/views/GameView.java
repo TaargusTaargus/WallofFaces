@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Jack Slettebak on 10/16/2017.
  */
 
-public class WOFView extends SurfaceView
+public class GameView extends SurfaceView
                             implements View.OnTouchListener, Animator.AnimationCallback {
 
     private Animator animator;
@@ -38,7 +38,7 @@ public class WOFView extends SurfaceView
     private ScheduledThreadPoolExecutor executor;
     private GameBoard game;
 
-    public WOFView( Context context ) {
+    public GameView(Context context ) {
         super( context );
         this.animator = new Animator( this );
         this.game = new GameBoard(
@@ -72,13 +72,14 @@ public class WOFView extends SurfaceView
                 touchStartPosition = new PointF( motionEvent.getX(), motionEvent.getY() );
                 break;
             case MotionEvent.ACTION_MOVE:
+                PointF faceEndPosition = null;
                 if( Math.abs( motionEvent.getX() - touchStartPosition.x ) > GameContext.BLOCK_SWIPE_THRESHOLD_X
-                        && ! lock ) {
-                    PointF faceEndPosition = new PointF(
+                        && ! lock )
+                    faceEndPosition = new PointF(
                             faceStartPosition.x + ( motionEvent.getX() > touchStartPosition.x ? 1 : -1 ) * GameContext.BLOCK_WIDTH,
                             faceStartPosition.y
                     );
-
+                    /*
                     GameSprite start = game.getFaceFromCoordinates( faceStartPosition.x, faceStartPosition.y );
                     start.setLocation( faceEndPosition );
 
@@ -88,8 +89,13 @@ public class WOFView extends SurfaceView
                     game.setFaceAtCoordinate( start );
                     game.setFaceAtCoordinate( end );
 
+                    //game.delete( start );
+                    //game.delete( end );
+
+                    //game.restructure();
+
                     lock = true;
-                    /*
+
                     animator.add(
                             new Interpolation(
                                     game.getFaceFromCoordinates( faceEndPosition.x, faceEndPosition.y ),
@@ -105,14 +111,15 @@ public class WOFView extends SurfaceView
                             )
                     );
                     */
-                }
                 else if( Math.abs( motionEvent.getY() - touchStartPosition.y ) > GameContext.BLOCK_SWIPE_THRESHOLD_Y
-                        && ! lock ) {
-                    PointF faceEndPosition = new PointF(
+                        && ! lock )
+                    faceEndPosition = new PointF(
                             faceStartPosition.x,
                             faceStartPosition.y + ( motionEvent.getY() > touchStartPosition.y ? 1 : -1 ) * GameContext.BLOCK_HEIGHT
                     );
 
+                if( faceEndPosition != null && faceEndPosition.x >= 0.f && faceEndPosition.x < GameContext.SCREEN_WIDTH
+                        && faceEndPosition.y >= 0.f && faceEndPosition.y < GameContext.SCREEN_HEIGHT ) {
                     GameSprite start = game.getFaceFromCoordinates( faceStartPosition.x, faceStartPosition.y );
                     start.setLocation( faceEndPosition );
 
@@ -121,6 +128,11 @@ public class WOFView extends SurfaceView
 
                     game.setFaceAtCoordinate( start );
                     game.setFaceAtCoordinate( end );
+
+                    //game.delete( start );
+                    //game.delete( end );
+
+                    //game.restructure();
 
                     lock = true;
                     /*

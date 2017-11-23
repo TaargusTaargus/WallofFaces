@@ -269,7 +269,7 @@ public class FaceCaptureActivity extends AppCompatActivity {
         @Override
         public void onClick( View view ) {
             GameContext.IMAGES = createdImages.getImagesArray();
-            startActivity( new Intent( getApplicationContext(), GameActivity.class ) );
+            startActivity( new Intent( getApplicationContext(), MainActivity.class ) );
         }
 
     }

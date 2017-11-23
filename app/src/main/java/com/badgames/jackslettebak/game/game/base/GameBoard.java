@@ -71,21 +71,44 @@ public class GameBoard {
         }
     }
 
-    public void onSelect( Float x, Float y ) {
+    public void delete( GameSprite sprite ) {
+        delete( sprite.getLocation().x, sprite.getLocation().y );
+    }
+
+    public void delete( Float x, Float y ) {
         Integer index = get1DFromCoordinate( x, y );
-        if( selected != null && selected.containsKey( index ) ) {
-            selected = null;
-            restructure();
-        } else {
-            if( selected != null )
+        if( wall[ index ] != null ) {
+            selected = new SelectList();
+            selectRecursive( x, y, wall[ index ].getType(), selected );
+            if( selected.size() >= 3 )
+                selected = null;
+            else
                 deselect();
-            if( wall[ index ] != null ) {
-                selected = new SelectList();
-                selectRecursive( x, y, wall[ index ].getType(), selected );
-                if( selected.size() > 1 )
-                    selected.select();
-                else
-                    deselect();
+        }
+    }
+
+    public void restructure() {
+        int missingX = 0;
+        for(int x = 0, missingY = 0; x < blocksOnX; x++, missingY = 0 ) {
+            for(int y = ( blocksOnY - 1 ) * blocksOnX + x; y >= 0; y -= blocksOnX ) {
+                if( wall[ y ] == null )
+                    missingY += 1;
+                else if( missingY > 0 ) {
+                    wall[ y + missingY * blocksOnX ] = wall[ y ];
+                    wall[ y ].move( new PointF( 0, spriteHeight * missingY ) );
+                    wall[ y ] = null;
+                }
+            }
+            if( missingY == blocksOnY )
+                missingX -= 1;
+            if( missingX != 0 ) {
+                for(int y = ( blocksOnY - 1 ) * blocksOnX + x; y >= 0; y -= blocksOnX ) {
+                    if( wall[ y ] != null ) {
+                        wall[ y - 1 ] = wall[ y ];
+                        wall[ y - 1 ].move( new PointF( spriteWidth * missingX, 0 ) );
+                        wall[ y ] = null;
+                    }
+                }
             }
         }
     }
@@ -127,32 +150,6 @@ public class GameBoard {
         }
     }
 
-    private void restructure() {
-        int missingX = 0;
-        for(int x = 0, missingY = 0; x < blocksOnX; x++, missingY = 0 ) {
-            for(int y = ( blocksOnY - 1 ) * blocksOnX + x; y >= 0; y -= blocksOnX ) {
-                if( wall[ y ] == null )
-                    missingY += 1;
-                else if( missingY > 0 ) {
-                    wall[ y + missingY * blocksOnX ] = wall[ y ];
-                    wall[ y ].move( new PointF( 0, spriteHeight * missingY ) );
-                    wall[ y ] = null;
-                }
-            }
-            if( missingY == blocksOnY )
-                missingX -= 1;
-            if( missingX != 0 ) {
-                for(int y = ( blocksOnY - 1 ) * blocksOnX + x; y >= 0; y -= blocksOnX ) {
-                    if( wall[ y ] != null ) {
-                        wall[ y - 1 ] = wall[ y ];
-                        wall[ y - 1 ].move( new PointF( spriteWidth * missingX, 0 ) );
-                        wall[ y ] = null;
-                    }
-                }
-            }
-        }
-    }
-
     private void selectRecursive( Float x, Float y, final Integer type, SelectList list ) {
         if( x > screenWidth || x < 0.f
                 || y > screenHeight || y < 0.f )
@@ -164,7 +161,7 @@ public class GameBoard {
 
         else {
             Integer index = get1DFromCoordinate( x, y );
-            list.put( index, select );
+            list.put( select.getType(), select );
             wall[ index ] = null;
             selectRecursive( x + spriteWidth, y, type, list );
             selectRecursive( x, y + spriteHeight, type, list );

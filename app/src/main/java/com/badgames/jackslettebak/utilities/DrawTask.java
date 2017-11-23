@@ -4,8 +4,6 @@ import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.badgames.jackslettebak.game.game.views.WOFView;
-
 /**
  * Created by Jack Slettebak on 11/12/2017.
  */

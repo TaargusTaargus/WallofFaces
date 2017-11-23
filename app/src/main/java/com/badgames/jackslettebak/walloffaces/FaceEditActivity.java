@@ -13,11 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import com.badgames.jackslettebak.game.game.utilities.GameContext;
-import com.badgames.jackslettebak.image.image.views.ColorPicker;
-import com.badgames.jackslettebak.image.image.views.ColorPicker.Colors;
-import com.badgames.jackslettebak.image.EditContext;
-import com.badgames.jackslettebak.image.image.views.FaceCropView;
-import com.badgames.jackslettebak.image.image.views.FaceEditView;
+import com.badgames.jackslettebak.editor.views.ColorPicker;
+import com.badgames.jackslettebak.editor.views.ColorPicker.Colors;
+import com.badgames.jackslettebak.editor.utilities.EditContext;
+import com.badgames.jackslettebak.editor.views.FaceCropView;
+import com.badgames.jackslettebak.editor.views.FaceEditView;
 import com.badgames.jackslettebak.utilities.ImageBuilder;
 
 /**

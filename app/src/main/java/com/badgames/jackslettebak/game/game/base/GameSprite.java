@@ -5,8 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 
-import com.badgames.jackslettebak.game.game.base.Drawable;
-import com.badgames.jackslettebak.image.Sprite;
+import com.badgames.jackslettebak.editor.base.Sprite;
 
 /**
  * Created by Jack Slettebak on 10/16/2017.

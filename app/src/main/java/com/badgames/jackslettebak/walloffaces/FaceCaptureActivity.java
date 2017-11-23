@@ -22,8 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.badgames.jackslettebak.game.game.utilities.GameContext;
-import com.badgames.jackslettebak.image.EditContext;
-import com.badgames.jackslettebak.image.ImagePack;
+import com.badgames.jackslettebak.editor.utilities.EditContext;
+import com.badgames.jackslettebak.editor.base.ImagePack;
 import com.badgames.jackslettebak.utilities.Utilities;
 
 import java.io.IOException;

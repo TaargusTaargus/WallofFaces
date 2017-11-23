@@ -7,7 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-import com.badgames.jackslettebak.image.ImagePack;
+import com.badgames.jackslettebak.editor.base.ImagePack;
 import com.badgames.jackslettebak.walloffaces.R;
 
 /**

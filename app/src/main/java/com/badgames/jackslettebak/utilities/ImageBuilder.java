@@ -8,8 +8,7 @@ import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 
-import com.badgames.jackslettebak.game.game.utilities.GameContext;
-import com.badgames.jackslettebak.image.image.views.ColorPicker.Colors;
+import com.badgames.jackslettebak.editor.views.ColorPicker.Colors;
 
 /**
  * Created by Jack Slettebak on 11/9/2017.

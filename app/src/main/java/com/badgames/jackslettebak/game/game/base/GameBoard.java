@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.PointF;
 
 import com.badgames.jackslettebak.game.game.utilities.GameContext;
-import com.badgames.jackslettebak.image.Sprite;
+import com.badgames.jackslettebak.editor.base.Sprite;
 
 import java.util.Date;
 import java.util.HashMap;

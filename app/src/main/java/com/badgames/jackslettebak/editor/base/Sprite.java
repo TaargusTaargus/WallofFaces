@@ -1,4 +1,4 @@
-package com.badgames.jackslettebak.image;
+package com.badgames.jackslettebak.editor.base;
 
 import android.graphics.Bitmap;
 
